@@ -33,6 +33,8 @@ any	.|\n
 	struct pfp_bdf *slot = NULL;
 	int *id = NULL;
 
+	BEGIN (INITIAL);
+
 <COMMENT>{
 	({space}\([^()]+\))?\n {
 		BEGIN (RULE);
