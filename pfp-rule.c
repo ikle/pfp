@@ -1,0 +1,139 @@
+/*
+ *  PCI finger-print rule
+ */
+
+#include <stdlib.h>
+#include "pfp-rule.h"
+
+struct pfp_rule *pfp_rule_alloc (void)
+{
+	struct pfp_rule *o;
+
+	if ((o = malloc (sizeof (*o))) == NULL)
+		return NULL;
+
+	o->next = NULL;
+
+	o->parent.bus = -1;
+	o->slot.bus   = -1;
+
+	o->interface = o->class = -1;
+
+	o->device  = o->vendor  = -1;
+	o->sdevice = o->svendor = -1;
+
+	return o;
+}
+
+void pfp_rule_free (struct pfp_rule *o)
+{
+	struct pfp_rule *next;
+
+	for (; o != NULL; o = next) {
+		next = o->next;
+		free (o);
+	}
+}
+
+size_t pfp_rule_count (struct pfp_rule *o)
+{
+	size_t count;
+
+	for (count = 0; o != NULL; ++count, o = o->next) {}
+
+	return count;
+}
+
+static void show_bdf (struct pfp_bdf *o, const char *prefix, FILE *to)
+{
+	if (o->bus < 0)
+		return;
+
+	fprintf (to, "%s\t= ", prefix);
+
+	if (o->bus != 0)
+		printf ("%x:", o->bus);
+
+	fprintf (to, "%x.%x\n", o->device, o->function);
+}
+
+static void show_id (int id, const char *prefix, FILE *to)
+{
+	if (id >= 0)
+		fprintf (to, "%s\t= %04x\n", prefix, id);
+}
+
+static void show_rule (struct pfp_rule *o, FILE *to)
+{
+	if (o->slot.bus != 0)
+		show_bdf (&o->parent, "parent", to);
+
+	show_bdf (&o->slot, "slot", to);
+
+	if (o->interface >= 0)
+		fprintf (to, "class\t= %04x.%x\n", o->class, o->interface);
+	else
+		show_id (o->class, "class", to);
+
+	show_id (o->vendor, "vendor", to);
+	show_id (o->device, "device", to);
+
+	if (o->svendor != 0 && o->svendor != o->vendor) {
+		show_id (o->svendor, "svendor", to);
+		show_id (o->sdevice, "sdevice", to);
+	}
+}
+
+void pfp_rule_show (struct pfp_rule *o, FILE *to)
+{
+	for (; o != NULL; o = o->next) {
+		show_rule (o, to);
+
+		if (o->next != NULL)
+			fprintf (to, "\n");
+	}
+}
+
+static int slot_match (struct pfp_bdf *o, struct pfp_bdf *pattern)
+{
+	if (pattern->bus < 0)
+		return 1;
+
+	return o->bus      == pattern->bus    &&
+	       o->device   == pattern->device &&
+	       o->function == pattern->function;
+}
+
+static int id_match (int id, int pattern)
+{
+	if (pattern < 0)
+		return 1;
+
+	return id == pattern;
+}
+
+static int rule_match (struct pfp_rule *o, struct pfp_rule *pattern)
+{
+	return slot_match (&o->parent, &pattern->parent)	&&
+	       slot_match (&o->slot,   &pattern->slot)		&&
+	       id_match (o->class, pattern->class)		&&
+	       id_match (o->interface, pattern->interface)	&&
+	       id_match (o->vendor, pattern->vendor)		&&
+	       id_match (o->device, pattern->device)		&&
+	       id_match (o->svendor, pattern->svendor)		&&
+	       id_match (o->sdevice, pattern->sdevice);
+}
+
+/* return number of matches */
+size_t pfp_rule_match (struct pfp_rule *o, struct pfp_rule *pattern)
+{
+	struct pfp_rule *p;
+	size_t count;
+
+	for (count = 0; o != NULL; o = o->next)
+		for (p = pattern; p != NULL; p = p->next)
+			if (rule_match (o, p))
+				++count;
+
+	return count;
+}

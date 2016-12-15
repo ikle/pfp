@@ -1,0 +1,103 @@
+slot	= 0.0
+class	= 0600.0
+vendor	= 8086
+device	= 0104
+svendor	= 17aa
+sdevice	= 21cf
+
+slot	= 2.0
+class	= 0300.0
+vendor	= 8086
+device	= 0116
+svendor	= 17aa
+sdevice	= 21cf
+
+slot	= 16.0
+class	= 0780.0
+vendor	= 8086
+device	= 1c3a
+
+slot	= 19.0
+class	= 0200.0
+vendor	= 8086
+device	= 1502
+svendor	= 17aa
+sdevice	= 21ce
+
+slot	= 1a.0
+class	= 0c03.20
+vendor	= 8086
+device	= 1c2d
+svendor	= 17aa
+sdevice	= 21cf
+
+slot	= 1b.0
+class	= 0403.0
+vendor	= 8086
+device	= 1c20
+svendor	= 17aa
+sdevice	= 21cf
+
+slot	= 1c.0
+class	= 0604.0
+vendor	= 8086
+device	= 1c10
+
+slot	= 1c.1
+class	= 0604.0
+vendor	= 8086
+device	= 1c12
+
+slot	= 1c.3
+class	= 0604.0
+vendor	= 8086
+device	= 1c16
+
+slot	= 1c.4
+class	= 0604.0
+vendor	= 8086
+device	= 1c18
+
+slot	= 1d.0
+class	= 0c03.20
+vendor	= 8086
+device	= 1c26
+svendor	= 17aa
+sdevice	= 21cf
+
+slot	= 1f.0
+class	= 0601.0
+vendor	= 8086
+device	= 1c4f
+
+slot	= 1f.2
+class	= 0106.1
+vendor	= 8086
+device	= 1c03
+svendor	= 17aa
+sdevice	= 21cf
+
+slot	= 1f.3
+class	= 0c05.0
+vendor	= 8086
+device	= 1c22
+svendor	= 17aa
+sdevice	= 21cf
+
+parent	= 1c.1
+slot	= 3:0.0
+class	= 0280.0
+vendor	= 8086
+device	= 0084
+
+parent	= 1c.4
+slot	= d:0.0
+class	= 0880.1
+vendor	= 1180
+device	= e823
+
+parent	= 1c.4
+slot	= d:0.3
+class	= 0c00.10
+vendor	= 1180
+device	= e832

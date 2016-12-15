@@ -1,0 +1,52 @@
+# North Bridge, Intel Natoma
+
+slot	= 0.0
+class	= 0600.0 (Host Bridge)
+vendor	= 8086 (Intel)
+device	= 1237 (440FX, 82441FX PMC)
+svendor	= 1af4 (Red Hat)
+sdevice	= 1100 (QEMU VM)
+
+# South Bridge, Intel PIIX3 + PIIX4 PM
+
+slot	= 1.0
+class	= 0601.0 (ISA Bridge)
+vendor	= 8086
+device	= 7000 (82371SB PIIX3 ISA)
+
+slot	= 1.1
+class	= 0101 (IDE Controller)
+vendor	= 8086
+device	= 7010 (82371SB PIIX3 IDE)
+
+slot	= 1.2
+class	= 0c03.0 (UHCI USB Controller)
+vendor	= 8086
+device	= 7020 (82371SB PIIX3 USB)
+
+slot	= 1.3
+class	= 0680.0 (Other Bridge Device)
+vendor	= 8086
+device	= 7113 (82371AB/EB/MB PIIX4 ACPI)
+
+# NICs
+
+slot	= 3.0
+class	= 0200.0 (Ethernet Controller)
+vendor	= 1af4
+device	= 1000 (Virtio network device)
+
+slot	= 4.0
+class	= 0200.0
+vendor	= 1af4
+device	= 1000
+
+slot	= 5.0
+class	= 0200.0
+vendor	= 1af4
+device	= 1000
+
+slot	= 6.0
+class	= 0200.0
+vendor	= 1af4
+device	= 1000
