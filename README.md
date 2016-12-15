@@ -2,9 +2,17 @@
 
 PCI finger-print utility intended for platform identification.
 
-To get current system PCI full finger-print:
+To get running system PCI full finger-print:
 
     pfp scan
+
+To parse finger-print file and get canonical view of it:
+
+    pfp parse < finger-print-file
+
+To match running system to finger-print pattern:
+
+    pfp match < finger-print-file
 
 ## Finger-Print file format
 
