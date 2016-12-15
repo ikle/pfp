@@ -174,6 +174,11 @@ struct pfp_rule *pfp_parser_run (struct pfp_parser *o)
 	return yylex (o);
 }
 
+void pfp_parser_reset (struct pfp_parser *o, FILE *from)
+{
+	yyrestart (from, o);
+}
+
 /* all in one */
 struct pfp_rule *pfp_parse (FILE *from)
 {

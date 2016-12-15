@@ -12,6 +12,7 @@ struct pfp_parser *pfp_parser_alloc (FILE *from);
 void pfp_parser_free (struct pfp_parser *o);
 
 struct pfp_rule *pfp_parser_run (struct pfp_parser *o);
+void pfp_parser_reset (struct pfp_parser *o, FILE *from);
 
 /* all in one */
 struct pfp_rule *pfp_parse (FILE *from);
