@@ -28,7 +28,7 @@ static void do_parse (void)
 {
 	struct pfp_rule *r;
 
-	if ((r = pfp_parse ()) == NULL) {
+	if ((r = pfp_parse (stdin)) == NULL) {
 		perror ("pfp parse");
 		exit (1);
 	}
@@ -48,7 +48,7 @@ static void do_match (void)
 		goto no_scan;
 	}
 
-	if ((pattern = pfp_parse ()) == NULL) {
+	if ((pattern = pfp_parse (stdin)) == NULL) {
 		perror ("pfp parse");
 		goto no_parse;
 	}

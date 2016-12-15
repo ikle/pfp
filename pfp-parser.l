@@ -147,12 +147,14 @@ any	.|\n
 
 %%
 
-struct pfp_parser *pfp_parser_alloc (void)
+struct pfp_parser *pfp_parser_alloc (FILE *from)
 {
 	yyscan_t s;
 
 	if (yylex_init (&s) != 0)
 		return NULL;
+
+	yyset_in (from, s);
 
 	return s;
 }
@@ -171,12 +173,12 @@ struct pfp_rule *pfp_parser_run (struct pfp_parser *o)
 }
 
 /* all in one */
-struct pfp_rule *pfp_parse (void)
+struct pfp_rule *pfp_parse (FILE *from)
 {
 	struct pfp_parser *p;
 	struct pfp_rule *r;
 
-	if ((p = pfp_parser_alloc ()) == NULL)
+	if ((p = pfp_parser_alloc (from)) == NULL)
 		return NULL;
 
 	r = pfp_parser_run (p);
