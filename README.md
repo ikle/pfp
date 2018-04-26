@@ -37,7 +37,7 @@ digits are lower case.
 
 Slot pattern format:
 
-1. The bus prefix is a one o two didit hexadecimal integer number, followed
+1. The bus prefix is a one or two didit hexadecimal integer number, followed
    by a semicolon symbol.
 2. The device is a one or two digit hexadecimal integer number from set
    [0,1f].
