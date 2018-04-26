@@ -13,6 +13,7 @@ struct pfp_rule *pfp_rule_alloc (void)
 		return NULL;
 
 	o->next = NULL;
+	o->up   = NULL;
 
 	o->parent.bus = -1;
 	o->slot.bus   = -1;
@@ -63,8 +64,26 @@ static void show_id (int id, const char *prefix, FILE *to)
 		fprintf (to, "%s\t= %04x\n", prefix, id);
 }
 
+static void show_path_iter (const struct pfp_rule *o, FILE *to)
+{
+	if (o == NULL || o == o->up)
+		return;
+
+	show_path_iter (o->up, to);
+	fprintf (to, "/%x.%x", o->slot.device, o->slot.function);
+}
+
+static void show_path (const struct pfp_rule *o, const char *prefix, FILE *to)
+{
+	fprintf (to, "%s\t= ", prefix);
+	show_path_iter (o, to);
+	fputc ('\n', to);
+}
+
 static void show_rule (struct pfp_rule *o, FILE *to)
 {
+	show_path (o, "path", to);
+
 	if (o->slot.bus != 0)
 		show_bdf (&o->parent, "parent", to);
 

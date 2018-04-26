@@ -13,6 +13,7 @@ struct pfp_bdf {
 
 struct pfp_rule {
 	struct pfp_rule *next;
+	const struct pfp_rule *up;
 
 	struct pfp_bdf parent, slot;
 	int class, interface;

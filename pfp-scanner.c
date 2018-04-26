@@ -13,6 +13,8 @@ struct pci_state {
 	struct pci_state_bus {
 		struct pci_dev *devices;
 		u8 bus, device, function;  /* parent BDF */
+		struct pfp_rule *link;     /* link to chain of rules to
+					      accelerate parent search */
 	} bus[256];
 };
 
@@ -90,6 +92,18 @@ static struct pfp_rule *pci_rule_alloc (struct pci_dev *dev)
 	return o;
 }
 
+static const
+struct pfp_rule *find_rarent_rule (const struct pfp_rule *p,
+				   int bus, int device, int function)
+{
+	for (; p != NULL && p->slot.bus == bus; p = p->next)
+		if (p->slot.device   == device &&
+		    p->slot.function == function)
+			return p;
+
+	return NULL;
+}
+
 struct pfp_rule *pfp_scan (void)
 {
 	struct pci_state s;
@@ -109,10 +123,22 @@ struct pfp_rule *pfp_scan (void)
 			*tail = rule;
 			tail = &rule->next;
 
+			if (s.bus[rule->slot.bus].link == NULL)
+				s.bus[rule->slot.bus].link = rule;
+
 			rule->parent.bus      = s.bus[i].bus;
 			rule->parent.device   = s.bus[i].device;
 			rule->parent.function = s.bus[i].function;
 		}
+
+	for (rule = head; rule != NULL; rule = rule->next) {
+		i = rule->parent.bus;
+
+		rule->up = find_rarent_rule (
+			s.bus[i].link,
+			i, rule->parent.device, rule->parent.function
+		);
+	}
 
 	pci_state_fini (&s);
 	return head;
