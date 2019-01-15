@@ -5,6 +5,8 @@
 #include <stdlib.h>
 #include "pfp-rule.h"
 
+extern int verbose;
+
 struct pfp_rule *pfp_rule_alloc (void)
 {
 	struct pfp_rule *o;
@@ -82,7 +84,8 @@ static void show_path (const struct pfp_rule *o, const char *prefix, FILE *to)
 
 static void show_rule (struct pfp_rule *o, FILE *to)
 {
-	show_path (o, "path", to);
+	if (verbose)
+		show_path (o, "path", to);
 
 	if (o->slot.bus != 0)
 		show_bdf (&o->parent, "parent", to);

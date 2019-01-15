@@ -9,6 +9,8 @@
 #include "pfp-parser.h"
 #include "pfp-scanner.h"
 
+int verbose;
+
 static void do_scan (void)
 {
 	struct pfp_rule *r;
@@ -42,6 +44,7 @@ static void do_parse (void)
 static void do_match (void)
 {
 	struct pfp_rule *r, *pattern;
+	size_t count, rank;
 
 	if ((r = pfp_scan ()) == NULL) {
 		perror ("pfp scan");
@@ -53,12 +56,17 @@ static void do_match (void)
 		goto no_parse;
 	}
 
-	printf ("pattern size = %zd\n", pfp_rule_count (pattern));
-	printf ("match rank = %zd\n", pfp_rule_match (r, pattern));
+	count = pfp_rule_count (pattern);
+	rank  = pfp_rule_match (r, pattern);
+
+	if (verbose) {
+		printf ("pattern size = %zd\n", count);
+		printf ("match rank = %zd\n", rank);
+	}
 
 	pfp_rule_free (pattern);
 	pfp_rule_free (r);
-	exit (0);
+	exit (rank == count ? 0 : 2);
 no_parse:
 	pfp_rule_free (r);
 no_scan:
@@ -67,6 +75,11 @@ no_scan:
 
 int main (int argc, char *argv[])
 {
+	if (argc > 1 && strcmp (argv[1], "-v") == 0) {
+		--argc, ++argv;
+		verbose = 1;
+	}
+
 	if (argc != 2)
 		goto usage;
 
@@ -78,8 +91,8 @@ int main (int argc, char *argv[])
 		do_match ();
 usage:
 	fprintf (stderr, "usage:\n"
-			 "\tpfp scan > out\n"
-			 "\tpfp parse < in\n"
-			 "\tpfp match < in\n");
+			 "\tpfp [-v] scan > out\n"
+			 "\tpfp [-v] parse < in\n"
+			 "\tpfp [-v] match < in\n");
 	return 1;
 }
