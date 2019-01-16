@@ -6,6 +6,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include <ftw.h>
+
 #include "pfp-parser.h"
 #include "pfp-scanner.h"
 
@@ -67,9 +69,59 @@ no_scan:
 	return 0;
 }
 
-static int do_match (void)
+static struct ctx {
+	size_t rank;
+	char *path;
+} walk_ctx;
+
+static int match_walker (const char *path, const struct stat *sb, int type)
+{
+	FILE *f;
+	size_t rank, count;
+
+	if (type != FTW_F)
+		return 0;
+
+	if ((f = fopen (path, "r")) == NULL)
+		goto no_open;
+
+	if (!pfp_match (f, &rank, &count))
+		goto no_match;
+
+	if (rank == count && walk_ctx.rank < rank) {
+		walk_ctx.rank = rank;
+		free (walk_ctx.path);
+		walk_ctx.path = strdup (path);
+	}
+
+	fclose (f);
+	return 0;
+no_match:
+	fclose (f);
+no_open:
+	return -1;
+}
+
+static int do_match_dirs (char *argv[])
+{
+	for (; argv[0] != NULL; ++argv)
+		if (ftw (argv[0], match_walker, 1000) < 0)
+			return 1;
+
+	if (walk_ctx.path == NULL)
+		return 2;
+
+	printf ("%s\n", walk_ctx.path);
+	free (walk_ctx.path);
+	return 0;
+}
+
+static int do_match (char *argv[])
 {
 	size_t rank, count;
+
+	if (argv[0] != NULL)
+		return do_match_dirs (argv);
 
 	if (!pfp_match (stdin, &rank, &count))
 		return 1;
@@ -95,12 +147,13 @@ int main (int argc, char *argv[])
 	if (argc == 2 && strcmp (argv[1], "parse") == 0)
 		return do_parse ();
 
-	if (argc == 2 && strcmp (argv[1], "match") == 0)
-		return do_match ();
+	if (argc >= 2 && strcmp (argv[1], "match") == 0)
+		return do_match (argv + 2);
 
 	fprintf (stderr, "usage:\n"
 			 "\tpfp [-v] scan > out\n"
 			 "\tpfp [-v] parse < in\n"
-			 "\tpfp [-v] match < in\n");
+			 "\tpfp [-v] match < in\n"
+			 "\tpfp [-v] match rule-directory ...\n");
 	return 1;
 }
