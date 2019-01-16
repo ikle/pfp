@@ -126,10 +126,8 @@ static int do_match (char *argv[])
 	if (!pfp_match (stdin, &rank, &count))
 		return 1;
 
-	if (verbose) {
-		printf ("pattern size = %zd\n", count);
-		printf ("match rank = %zd\n", rank);
-	}
+	if (verbose)
+		printf ("match rank = %zd/%zd\n", rank, count);
 
 	return rank != count ? 2 : 0;
 }
