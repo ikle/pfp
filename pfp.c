@@ -76,10 +76,14 @@ static struct ctx {
 
 static int match_walker (const char *path, const struct stat *sb, int type)
 {
+	const char *dot;
 	FILE *f;
 	size_t rank, count;
 
 	if (type != FTW_F)
+		return 0;
+
+	if ((dot = strrchr (path, '.')) == NULL || strcmp (dot, ".pfp") != 0)
 		return 0;
 
 	if ((f = fopen (path, "r")) == NULL)
