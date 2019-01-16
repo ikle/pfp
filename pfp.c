@@ -94,6 +94,9 @@ static int match_walker (const char *path, const struct stat *sb, int type)
 		walk_ctx.path = strdup (path);
 	}
 
+	if (verbose)
+		printf ("%s: %zd/%zd\n", path, rank, count);
+
 	fclose (f);
 	return 0;
 no_match:
