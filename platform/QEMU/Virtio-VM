@@ -19,11 +19,6 @@ class	= 0101 (IDE Controller)
 vendor	= 8086
 device	= 7010 (82371SB PIIX3 IDE)
 
-slot	= 1.2
-class	= 0c03.0 (UHCI USB Controller)
-vendor	= 8086
-device	= 7020 (82371SB PIIX3 USB)
-
 slot	= 1.3
 class	= 0680.0 (Other Bridge Device)
 vendor	= 8086
