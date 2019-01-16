@@ -11,37 +11,37 @@
 
 int verbose;
 
-static void do_scan (void)
+static int do_scan (void)
 {
 	struct pfp_rule *r;
 
 	if ((r = pfp_scan ()) == NULL) {
 		perror ("pfp scan");
-		exit (1);
+		return 1;
 	}
 
 	pfp_rule_show (r, stdout);
 	pfp_rule_free (r);
 
-	exit (0);
+	return 0;
 }
 
-static void do_parse (void)
+static int do_parse (void)
 {
 	struct pfp_rule *r;
 
 	if ((r = pfp_parse (stdin)) == NULL) {
 		perror ("pfp parse");
-		exit (1);
+		return 1;
 	}
 
 	pfp_rule_show (r, stdout);
 	pfp_rule_free (r);
 
-	exit (0);
+	return 0;
 }
 
-static void do_match (void)
+static int do_match (void)
 {
 	struct pfp_rule *r, *pattern;
 	size_t count, rank;
@@ -66,11 +66,11 @@ static void do_match (void)
 
 	pfp_rule_free (pattern);
 	pfp_rule_free (r);
-	exit (rank == count ? 0 : 2);
+	return rank == count ? 0 : 2;
 no_parse:
 	pfp_rule_free (r);
 no_scan:
-	exit (1);
+	return 1;
 }
 
 int main (int argc, char *argv[])
@@ -84,11 +84,11 @@ int main (int argc, char *argv[])
 		goto usage;
 
 	if (strcmp (argv[1], "scan") == 0)
-		do_scan ();
+		return do_scan ();
 	else if (strcmp (argv[1], "parse") == 0)
-		do_parse ();
+		return do_parse ();
 	else if (strcmp (argv[1], "match") == 0)
-		do_match ();
+		return do_match ();
 usage:
 	fprintf (stderr, "usage:\n"
 			 "\tpfp [-v] scan > out\n"
