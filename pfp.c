@@ -92,9 +92,11 @@ int main (int argc, char *argv[])
 
 	if (strcmp (argv[1], "scan") == 0)
 		return do_scan ();
-	else if (strcmp (argv[1], "parse") == 0)
+
+	if (strcmp (argv[1], "parse") == 0)
 		return do_parse ();
-	else if (strcmp (argv[1], "match") == 0)
+
+	if (strcmp (argv[1], "match") == 0)
 		return do_match ();
 usage:
 	fprintf (stderr, "usage:\n"
