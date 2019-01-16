@@ -87,18 +87,15 @@ int main (int argc, char *argv[])
 		verbose = 1;
 	}
 
-	if (argc != 2)
-		goto usage;
-
-	if (strcmp (argv[1], "scan") == 0)
+	if (argc == 2 && strcmp (argv[1], "scan") == 0)
 		return do_scan ();
 
-	if (strcmp (argv[1], "parse") == 0)
+	if (argc == 2 && strcmp (argv[1], "parse") == 0)
 		return do_parse ();
 
-	if (strcmp (argv[1], "match") == 0)
+	if (argc == 2 && strcmp (argv[1], "match") == 0)
 		return do_match ();
-usage:
+
 	fprintf (stderr, "usage:\n"
 			 "\tpfp [-v] scan > out\n"
 			 "\tpfp [-v] parse < in\n"
