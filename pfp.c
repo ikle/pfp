@@ -41,10 +41,9 @@ static int do_parse (void)
 	return 0;
 }
 
-static int pfp_match (FILE *f)
+static int pfp_match (FILE *f, size_t *rank, size_t *count)
 {
 	struct pfp_rule *r, *pattern;
-	size_t count, rank;
 
 	if ((r = pfp_scan ()) == NULL) {
 		perror ("pfp scan");
@@ -56,28 +55,31 @@ static int pfp_match (FILE *f)
 		goto no_parse;
 	}
 
-	count = pfp_rule_count (pattern);
-	rank  = pfp_rule_match (r, pattern);
+	*count = pfp_rule_count (pattern);
+	*rank  = pfp_rule_match (r, pattern);
+
+	pfp_rule_free (pattern);
+	pfp_rule_free (r);
+	return 1;
+no_parse:
+	pfp_rule_free (r);
+no_scan:
+	return 0;
+}
+
+static int do_match (void)
+{
+	size_t rank, count;
+
+	if (!pfp_match (stdin, &rank, &count))
+		return 1;
 
 	if (verbose) {
 		printf ("pattern size = %zd\n", count);
 		printf ("match rank = %zd\n", rank);
 	}
 
-	pfp_rule_free (pattern);
-	pfp_rule_free (r);
-	return rank == count;
-no_parse:
-	pfp_rule_free (r);
-no_scan:
-	return -1;
-}
-
-static int do_match (void)
-{
-	int ret = pfp_match (stdin);
-
-	return ret < 0 ? 1 : ret == 0 ? 2 : 0;
+	return rank != count ? 2 : 0;
 }
 
 int main (int argc, char *argv[])
