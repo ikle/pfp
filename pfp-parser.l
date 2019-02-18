@@ -114,6 +114,7 @@ any	.|\n
 }
 
 <RULE>{
+	#.+\n		/* line comment */
 	parent{eq}	slot = &rule->parent; BEGIN (SLOT);
 	slot{eq}	slot = &rule->slot;   BEGIN (SLOT);
 	class{eq}	BEGIN (CLASS);
