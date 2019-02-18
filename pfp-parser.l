@@ -9,6 +9,10 @@
 #include "pfp-parser.h"
 
 #define YY_DECL  struct pfp_rule *pfplex (yyscan_t yyscanner)
+
+static void fatal_error (const char *msg, yyscan_t yyscanner);
+
+#define YY_FATAL_ERROR(msg)  fatal_error(msg, yyscanner)
 %}
 
 %option reentrant prefix="pfp"
@@ -40,7 +44,7 @@ any	.|\n
 		BEGIN (RULE);
 	}
 	{any} {
-		YY_FATAL_ERROR ("E: extra characters at end of line");
+		YY_FATAL_ERROR ("extra characters at end of line");
 	}
 }
 
@@ -65,7 +69,7 @@ any	.|\n
 		BEGIN (SLOT_FN);
 	}
 	{any} {
-		YY_FATAL_ERROR ("E: PCI device number expected");
+		YY_FATAL_ERROR ("PCI device number expected");
 	}
 }
 
@@ -76,7 +80,7 @@ any	.|\n
 		BEGIN (COMMENT);
 	}
 	{any} {
-		YY_FATAL_ERROR ("E: PCI device function expected");
+		YY_FATAL_ERROR ("PCI device function expected");
 	}
 }
 
@@ -86,7 +90,7 @@ any	.|\n
 		BEGIN (CLASS_IF);
 	}
 	{any} {
-		YY_FATAL_ERROR ("E: PCI class expected");
+		YY_FATAL_ERROR ("PCI class expected");
 	}
 }
 
@@ -109,7 +113,7 @@ any	.|\n
 		BEGIN (COMMENT);
 	}
 	{any} {
-		YY_FATAL_ERROR ("E: PCI identifier expected");
+		YY_FATAL_ERROR ("PCI identifier expected");
 	}
 }
 
@@ -126,7 +130,7 @@ any	.|\n
 	<<EOF>>		return head;
 	\n		BEGIN (INITIAL);
 
-	{any}		YY_FATAL_ERROR ("E: unrecognized rule line");
+	{any}		YY_FATAL_ERROR ("unrecognized rule line");
 }
 
 <INITIAL>{
@@ -149,6 +153,14 @@ any	.|\n
 }
 
 %%
+
+static void fatal_error (const char *msg, yyscan_t yyscanner)
+{
+	struct yyguts_t * yyg = yyscanner;
+
+	fprintf (stderr, "E:%d: %s\n", yylineno, msg);
+	exit (1);
+}
 
 struct pfp_parser *pfp_parser_alloc (FILE *from)
 {
