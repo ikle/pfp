@@ -94,7 +94,7 @@ parent	= 1c.4
 slot	= d:0.0
 class	= 0880.1
 vendor	= 1180
-device	= e822
+# device	= e822 or e823 — changed from boot to boot
 
 parent	= 1c.4
 slot	= d:0.3
