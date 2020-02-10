@@ -18,6 +18,7 @@ static void fatal_error (const char *msg, yyscan_t yyscanner);
 %option reentrant prefix="pfp"
 %option yylineno never-interactive
 %option nodefault noyywrap
+%option noinput
 
 %x COMMENT
 %x SLOT SLOT_DEV SLOT_FN
