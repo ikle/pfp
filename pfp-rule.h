@@ -25,6 +25,7 @@ struct pfp_rule *pfp_rule_alloc (void);
 void pfp_rule_free (struct pfp_rule *o);
 
 size_t pfp_rule_count (struct pfp_rule *o);
+struct pfp_rule *pfp_rule_sort (struct pfp_rule *o);
 
 void pfp_rule_show (struct pfp_rule *o, FILE *to);
 

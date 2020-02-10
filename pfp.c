@@ -22,6 +22,11 @@ static int do_scan (void)
 		return 1;
 	}
 
+	if ((r = pfp_rule_sort (r)) == NULL) {
+		perror ("pfp sort");
+		return 1;
+	}
+
 	pfp_rule_show (r, stdout);
 	pfp_rule_free (r);
 
@@ -34,6 +39,11 @@ static int do_parse (void)
 
 	if ((r = pfp_parse (stdin)) == NULL) {
 		perror ("pfp parse");
+		return 1;
+	}
+
+	if ((r = pfp_rule_sort (r)) == NULL) {
+		perror ("pfp sort");
 		return 1;
 	}
 

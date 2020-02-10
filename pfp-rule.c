@@ -47,6 +47,44 @@ size_t pfp_rule_count (struct pfp_rule *o)
 	return count;
 }
 
+static int rule_cmp (const void *a, const void *b)
+{
+	const struct pfp_rule *const *p = a, *const *q = b;
+
+	if (p[0]->slot.bus != q[0]->slot.bus)
+		return p[0]->slot.bus - q[0]->slot.bus;
+
+	if (p[0]->slot.device != q[0]->slot.device)
+		return p[0]->slot.device - q[0]->slot.device;
+
+	return p[0]->slot.function - q[0]->slot.function;
+}
+
+struct pfp_rule *pfp_rule_sort (struct pfp_rule *o)
+{
+	struct pfp_rule **set;
+	size_t count = pfp_rule_count (o), i;
+
+	if ((set = malloc (sizeof (set[0]) * count)) == NULL) {
+		pfp_rule_free (o);
+		return NULL;
+	}
+
+	for (i = 0; i < count; ++i, o = o->next)
+		set[i] = o;
+
+	qsort (set, count, sizeof (set[0]), rule_cmp);
+
+	for (i = 0; i < (count - 1); ++i)
+		set[i]->next = set[i + 1];
+
+	set[count - 1]->next = NULL;
+
+	o = set[0];
+	free (set);
+	return o;
+}
+
 static void show_bdf (struct pfp_bdf *o, const char *prefix, FILE *to)
 {
 	if (o->bus < 0)
