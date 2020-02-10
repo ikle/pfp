@@ -55,7 +55,7 @@ static void show_bdf (struct pfp_bdf *o, const char *prefix, FILE *to)
 	fprintf (to, "%s\t= ", prefix);
 
 	if (o->bus != 0)
-		printf ("%x:", o->bus);
+		fprintf (to, "%x:", o->bus);
 
 	fprintf (to, "%x.%x\n", o->device, o->function);
 }
