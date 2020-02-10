@@ -157,7 +157,7 @@ any	.|\n
 
 static void fatal_error (const char *msg, yyscan_t yyscanner)
 {
-	struct yyguts_t * yyg = yyscanner;
+	struct yyguts_t *yyg = yyscanner;
 
 	fprintf (stderr, "E:%d: %s\n", yylineno, msg);
 	exit (1);
