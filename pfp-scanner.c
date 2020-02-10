@@ -93,7 +93,7 @@ static struct pfp_rule *pci_rule_alloc (struct pci_dev *dev)
 }
 
 static const
-struct pfp_rule *find_rarent_rule (const struct pfp_rule *p,
+struct pfp_rule *find_parent_rule (const struct pfp_rule *p,
 				   int bus, int device, int function)
 {
 	for (; p != NULL && p->slot.bus == bus; p = p->next)
@@ -134,7 +134,7 @@ struct pfp_rule *pfp_scan (void)
 	for (rule = head; rule != NULL; rule = rule->next) {
 		i = rule->parent.bus;
 
-		rule->up = find_rarent_rule (
+		rule->up = find_parent_rule (
 			s.bus[i].link,
 			i, rule->parent.device, rule->parent.function
 		);
