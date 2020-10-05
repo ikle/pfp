@@ -108,7 +108,7 @@ static int match_walker (const char *path, const struct stat *sb, int type)
 		walk_ctx.path = strdup (path);
 	}
 
-	if (verbose)
+	if (verbose > 0)
 		printf ("%s: %zd/%zd\n", path, rank, count);
 
 	fclose (f);
@@ -143,7 +143,7 @@ static int do_match (char *argv[])
 	if (!pfp_match (stdin, &rank, &count))
 		return 1;
 
-	if (verbose)
+	if (verbose > 0)
 		printf ("match rank = %zd/%zd\n", rank, count);
 
 	return rank != count ? 2 : 0;
@@ -151,9 +151,9 @@ static int do_match (char *argv[])
 
 int main (int argc, char *argv[])
 {
-	if (argc > 1 && strcmp (argv[1], "-v") == 0) {
+	while (argc > 1 && strcmp (argv[1], "-v") == 0) {
 		--argc, ++argv;
-		verbose = 1;
+		++verbose;
 	}
 
 	if (argc == 2 && strcmp (argv[1], "scan") == 0)

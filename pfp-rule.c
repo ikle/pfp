@@ -122,7 +122,7 @@ static void show_path (const struct pfp_rule *o, const char *prefix, FILE *to)
 
 static void show_rule (struct pfp_rule *o, FILE *to)
 {
-	if (verbose)
+	if (verbose > 0)
 		show_path (o, "path", to);
 
 	if (o->slot.bus != 0)
