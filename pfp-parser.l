@@ -21,6 +21,7 @@ static void fatal_error (const char *msg, yyscan_t yyscanner);
 %option noinput
 
 %x COMMENT
+%x PATH
 %x SLOT SLOT_DEV SLOT_FN
 %x CLASS CLASS_IF
 %x ID
@@ -46,6 +47,13 @@ any	.|\n
 	}
 	{any} {
 		YY_FATAL_ERROR ("extra characters at end of line");
+	}
+}
+
+<PATH>{
+	(\/[01]?{xdigit}\.[0-7])* {
+		rule->path = strdup (yytext);
+		BEGIN (COMMENT);
 	}
 }
 
@@ -120,6 +128,7 @@ any	.|\n
 
 <RULE>{
 	#.+\n		/* line comment */
+	path{eq}	BEGIN (PATH);
 	parent{eq}	slot = &rule->parent; BEGIN (SLOT);
 	slot{eq}	slot = &rule->slot;   BEGIN (SLOT);
 	class{eq}	BEGIN (CLASS);

@@ -15,6 +15,8 @@ struct pfp_rule {
 	struct pfp_rule *next;
 	const struct pfp_rule *up;
 
+	char *path;
+
 	struct pfp_bdf parent, slot;
 	int class, interface;
 	int vendor, device;

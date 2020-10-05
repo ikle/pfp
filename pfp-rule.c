@@ -3,6 +3,8 @@
  */
 
 #include <stdlib.h>
+#include <string.h>
+
 #include "pfp-rule.h"
 
 extern int verbose;
@@ -16,6 +18,8 @@ struct pfp_rule *pfp_rule_alloc (void)
 
 	o->next = NULL;
 	o->up   = NULL;
+
+	o->path = NULL;
 
 	o->parent.bus = -1;
 	o->slot.bus   = -1;
@@ -34,6 +38,7 @@ void pfp_rule_free (struct pfp_rule *o)
 
 	for (; o != NULL; o = next) {
 		next = o->next;
+		free (o->path);
 		free (o);
 	}
 }
@@ -158,10 +163,19 @@ static int id_match (int id, int pattern)
 	return id == pattern;
 }
 
+static int path_match (struct pfp_rule *o, struct pfp_rule *pattern)
+{
+	if (o->path != NULL && pattern->path != NULL)
+		return strcmp (o->path, pattern->path) == 0;
+
+	return slot_match (&o->parent, &pattern->parent) &&
+	       slot_match (&o->slot,   &pattern->slot);
+
+}
+
 static int rule_match (struct pfp_rule *o, struct pfp_rule *pattern)
 {
-	return slot_match (&o->parent, &pattern->parent)	&&
-	       slot_match (&o->slot,   &pattern->slot)		&&
+	return path_match (o, pattern)				&&
 	       id_match (o->class, pattern->class)		&&
 	       id_match (o->interface, pattern->interface)	&&
 	       id_match (o->vendor, pattern->vendor)		&&
