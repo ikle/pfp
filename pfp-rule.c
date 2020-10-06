@@ -104,26 +104,10 @@ static void show_id (int id, const char *prefix, FILE *to)
 		fprintf (to, "%s\t= %04x\n", prefix, id);
 }
 
-static void show_path_iter (const struct pfp_rule *o, FILE *to)
-{
-	if (o == NULL || o == o->up)
-		return;
-
-	show_path_iter (o->up, to);
-	fprintf (to, "/%x.%x", o->slot.device, o->slot.function);
-}
-
-static void show_path (const struct pfp_rule *o, const char *prefix, FILE *to)
-{
-	fprintf (to, "%s\t= ", prefix);
-	show_path_iter (o, to);
-	fputc ('\n', to);
-}
-
 static void show_rule (struct pfp_rule *o, FILE *to)
 {
-	if (verbose > 0)
-		show_path (o, "path", to);
+	if (verbose > 0 && o->path != NULL)
+		fprintf (to, "path\t= %s\n", o->path);
 
 	if (o->slot.bus != 0)
 		show_bdf (&o->parent, "parent", to);
