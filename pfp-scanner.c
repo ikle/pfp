@@ -2,7 +2,9 @@
  * PCI finger-print bus scanner
  */
 
+#include <stdlib.h>
 #include <string.h>
+
 #include <pci/pci.h>
 
 #include "pfp-scanner.h"
@@ -104,6 +106,35 @@ struct pfp_rule *find_parent_rule (const struct pfp_rule *p,
 	return NULL;
 }
 
+static size_t write_path (char *to, size_t avail, const struct pfp_rule *o)
+{
+	size_t len;
+
+	if (o == NULL || o == o->up)
+		return 0;
+
+	len = write_path (to, avail, o->up);
+
+	to += len;
+	avail = avail > len ? avail - len: 0;
+
+	len += snprintf (to, avail, "/%x.%x", o->slot.device, o->slot.function);
+	return len;
+}
+
+static char *calc_path (const struct pfp_rule *o)
+{
+	size_t len = write_path (NULL, 0, o);
+	char *path;
+
+	if ((path = malloc (len + 1)) == NULL)
+		return path;
+
+	write_path (path, len + 1, o);
+	path[len] = '\0';
+	return path;
+}
+
 struct pfp_rule *pfp_scan (void)
 {
 	struct pci_state s;
@@ -139,6 +170,9 @@ struct pfp_rule *pfp_scan (void)
 			i, rule->parent.device, rule->parent.function
 		);
 	}
+
+	for (rule = head; rule != NULL; rule = rule->next)
+		rule->path = calc_path (rule);
 
 	pci_state_fini (&s);
 	return head;
