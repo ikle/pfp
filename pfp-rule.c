@@ -184,6 +184,16 @@ static int rule_match (const struct pfp_rule *o, const struct pfp_rule *pattern)
 	       id_match (o->sdevice,	pattern->sdevice);
 }
 
+const struct pfp_rule *
+pfp_rule_search (const struct pfp_rule *o, const struct pfp_bdf *slot)
+{
+	for (; o != NULL; o = o->next)
+		if (slot_match (&o->slot, slot))
+			break;
+
+	return o;
+}
+
 /* return number of matches */
 size_t pfp_rule_match (const struct pfp_rule *o, const struct pfp_rule *pattern)
 {

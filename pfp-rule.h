@@ -31,6 +31,9 @@ struct pfp_rule *pfp_rule_sort (struct pfp_rule *o);
 
 void pfp_rule_show (struct pfp_rule *o, FILE *to);
 
+const struct pfp_rule *
+pfp_rule_search (const struct pfp_rule *o, const struct pfp_bdf *slot);
+
 /* return number of matches */
 size_t
 pfp_rule_match (const struct pfp_rule *o, const struct pfp_rule *pattern);
