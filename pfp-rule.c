@@ -145,7 +145,7 @@ void pfp_rule_show (struct pfp_rule *o, FILE *to)
 	}
 }
 
-static int slot_match (struct pfp_bdf *o, struct pfp_bdf *pattern)
+static int slot_match (const struct pfp_bdf *o, const struct pfp_bdf *pattern)
 {
 	if (pattern->bus < 0)
 		return 1;
@@ -163,7 +163,7 @@ static int id_match (int id, int pattern)
 	return id == pattern;
 }
 
-static int path_match (struct pfp_rule *o, struct pfp_rule *pattern)
+static int path_match (const struct pfp_rule *o, const struct pfp_rule *pattern)
 {
 	if (o->path != NULL && pattern->path != NULL)
 		return strcmp (o->path, pattern->path) == 0;
@@ -173,7 +173,7 @@ static int path_match (struct pfp_rule *o, struct pfp_rule *pattern)
 
 }
 
-static int rule_match (struct pfp_rule *o, struct pfp_rule *pattern)
+static int rule_match (const struct pfp_rule *o, const struct pfp_rule *pattern)
 {
 	return path_match (o, pattern)				&&
 	       id_match (o->class,	pattern->class)		&&
@@ -185,9 +185,9 @@ static int rule_match (struct pfp_rule *o, struct pfp_rule *pattern)
 }
 
 /* return number of matches */
-size_t pfp_rule_match (struct pfp_rule *o, struct pfp_rule *pattern)
+size_t pfp_rule_match (const struct pfp_rule *o, const struct pfp_rule *pattern)
 {
-	struct pfp_rule *p;
+	const struct pfp_rule *p;
 	size_t count;
 
 	for (count = 0; o != NULL; o = o->next)

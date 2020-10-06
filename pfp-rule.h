@@ -32,6 +32,7 @@ struct pfp_rule *pfp_rule_sort (struct pfp_rule *o);
 void pfp_rule_show (struct pfp_rule *o, FILE *to);
 
 /* return number of matches */
-size_t pfp_rule_match (struct pfp_rule *o, struct pfp_rule *pattern);
+size_t
+pfp_rule_match (const struct pfp_rule *o, const struct pfp_rule *pattern);
 
 #endif  /* _PFP_RULE_H */
