@@ -111,13 +111,15 @@ static void show_id (int id, const char *prefix, FILE *to)
 
 static void show_rule (struct pfp_rule *o, FILE *to)
 {
-	if (verbose > 0 && o->path != NULL)
+	if (o->path != NULL)
 		fprintf (to, "path\t= %s\n", o->path);
 
-	if (o->slot.bus != 0)
-		show_bdf (&o->parent, "parent", to);
+	if (o->path == NULL || verbose > 0) {
+		if (o->slot.bus != 0)
+			show_bdf (&o->parent, "parent", to);
 
-	show_bdf (&o->slot, "slot", to);
+		show_bdf (&o->slot, "slot", to);
+	}
 
 	if (o->interface >= 0)
 		fprintf (to, "class\t= %04x.%x\n", o->class, o->interface);
