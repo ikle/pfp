@@ -176,12 +176,12 @@ static int path_match (struct pfp_rule *o, struct pfp_rule *pattern)
 static int rule_match (struct pfp_rule *o, struct pfp_rule *pattern)
 {
 	return path_match (o, pattern)				&&
-	       id_match (o->class, pattern->class)		&&
-	       id_match (o->interface, pattern->interface)	&&
-	       id_match (o->vendor, pattern->vendor)		&&
-	       id_match (o->device, pattern->device)		&&
-	       id_match (o->svendor, pattern->svendor)		&&
-	       id_match (o->sdevice, pattern->sdevice);
+	       id_match (o->class,	pattern->class)		&&
+	       id_match (o->interface,	pattern->interface)	&&
+	       id_match (o->vendor,	pattern->vendor)	&&
+	       id_match (o->device,	pattern->device)	&&
+	       id_match (o->svendor,	pattern->svendor)	&&
+	       id_match (o->sdevice,	pattern->sdevice);
 }
 
 /* return number of matches */
