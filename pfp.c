@@ -33,6 +33,42 @@ static int do_scan (void)
 	return 0;
 }
 
+static int parse_slot (const char *slot, struct pfp_bdf *o)
+{
+	if (sscanf (slot, "%x:%x.%o", &o->bus, &o->device, &o->function) == 3)
+		return 1;
+
+	o->bus = 0;
+	return sscanf (slot, "%x.%o", &o->device, &o->function) == 2;
+}
+
+static int do_path (const char *slot)
+{
+	struct pfp_bdf bdf;
+	struct pfp_rule *list;
+	const struct pfp_rule *r;
+
+	if (!parse_slot (slot, &bdf)) {
+		fprintf (stderr, "pfp path: cannot parse BDF\n");
+		return 1;
+	}
+
+	if ((list = pfp_scan ()) == NULL) {
+		perror ("pfp path");
+		return 1;
+	}
+
+	if ((r = pfp_rule_search (list, &bdf)) == NULL || r->path == NULL)
+		goto no_device;
+
+	printf ("%s\n", r->path);
+	pfp_rule_free (list);
+	return 0;
+no_device:
+	pfp_rule_free (list);
+	return 1;
+}
+
 static int do_parse (void)
 {
 	struct pfp_rule *r;
@@ -159,6 +195,9 @@ int main (int argc, char *argv[])
 	if (argc == 2 && strcmp (argv[1], "scan") == 0)
 		return do_scan ();
 
+	if (argc == 3 && strcmp (argv[1], "path") == 0)
+		return do_path (argv[2]);
+
 	if (argc == 2 && strcmp (argv[1], "parse") == 0)
 		return do_parse ();
 
@@ -167,6 +206,7 @@ int main (int argc, char *argv[])
 
 	fprintf (stderr, "usage:\n"
 			 "\tpfp [-v] scan > out\n"
+			 "\tpfp [-v] path slot-BDF\n"
 			 "\tpfp [-v] parse < in\n"
 			 "\tpfp [-v] match < in\n"
 			 "\tpfp [-v] match rule-directory ...\n");
