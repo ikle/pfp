@@ -35,6 +35,12 @@ static int do_scan (void)
 
 static int parse_slot (const char *slot, struct pfp_bdf *o)
 {
+	int segment;
+
+	if (sscanf (slot, "%x:%x:%x.%o", &segment, &o->bus, &o->device,
+					 &o->function) == 4)
+		return segment == 0;
+
 	if (sscanf (slot, "%x:%x.%o", &o->bus, &o->device, &o->function) == 3)
 		return 1;
 
@@ -49,7 +55,7 @@ static int do_path (const char *slot)
 	const struct pfp_rule *r;
 
 	if (!parse_slot (slot, &bdf)) {
-		fprintf (stderr, "pfp path: cannot parse BDF\n");
+		fprintf (stderr, "pfp path: cannot parse SBDF\n");
 		return 1;
 	}
 
@@ -206,7 +212,7 @@ int main (int argc, char *argv[])
 
 	fprintf (stderr, "usage:\n"
 			 "\tpfp [-v] scan > out\n"
-			 "\tpfp [-v] path slot-BDF\n"
+			 "\tpfp [-v] path SBDF\n"
 			 "\tpfp [-v] parse < in\n"
 			 "\tpfp [-v] match < in\n"
 			 "\tpfp [-v] match rule-directory ...\n");
