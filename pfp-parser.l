@@ -51,9 +51,16 @@ any	.|\n
 }
 
 <PATH>{
-	(\/[01]?{xdigit}\.[0-7])* {
+	(\/[01]?{xdigit}\.[0-7])+ {
 		rule->path = strdup (yytext);
 		BEGIN (COMMENT);
+	}
+	({space}\([^()]+\))?\n {
+		rule->path = strdup ("");
+		BEGIN (RULE);
+	}
+	{any} {
+		YY_FATAL_ERROR ("extra characters at end of line");
 	}
 }
 
