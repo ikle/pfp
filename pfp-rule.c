@@ -133,7 +133,7 @@ static void show_rule (struct pfp_rule *o, FILE *to)
 	show_id (o->device, "device", to);
 
 	if ((o->svendor != 0 && o->svendor != 0xffff &&
-	     o->svendor != o->vendor) ||
+	     (o->svendor != o->vendor || o->sdevice != o->device)) ||
 	    verbose > 1) {
 		show_id (o->svendor, "svendor", to);
 		show_id (o->sdevice, "sdevice", to);
