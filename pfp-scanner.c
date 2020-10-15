@@ -70,6 +70,7 @@ static void pci_state_fini (struct pci_state *s)
 static struct pfp_rule *pci_rule_alloc (struct pci_dev *dev)
 {
 	struct pfp_rule *o;
+	int v;
 
 	if ((o = pfp_rule_alloc ()) == NULL)
 		return NULL;
@@ -86,7 +87,9 @@ static struct pfp_rule *pci_rule_alloc (struct pci_dev *dev)
 	o->vendor = dev->vendor_id;
 	o->device = dev->device_id;
 
-	if (pci_read_byte (dev, PCI_HEADER_TYPE) == PCI_HEADER_TYPE_NORMAL) {
+	v = pci_read_byte (dev, PCI_HEADER_TYPE) & 0x7f;
+
+	if (v == PCI_HEADER_TYPE_NORMAL) {
 		o->svendor = pci_read_word (dev, PCI_SUBSYSTEM_VENDOR_ID);
 		o->sdevice = pci_read_word (dev, PCI_SUBSYSTEM_ID);
 	}
