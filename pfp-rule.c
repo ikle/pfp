@@ -56,6 +56,9 @@ static int rule_cmp (const void *a, const void *b)
 {
 	const struct pfp_rule *const *p = a, *const *q = b;
 
+	if (p[0]->path != NULL && q[0]->path != NULL)
+		return strcmp (p[0]->path, q[0]->path);
+
 	if (p[0]->slot.bus != q[0]->slot.bus)
 		return p[0]->slot.bus - q[0]->slot.bus;
 
