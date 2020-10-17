@@ -1,4 +1,4 @@
-TARGETS = pfp
+TARGETS = pfp pfp-convert
 
 all: $(TARGETS)
 
