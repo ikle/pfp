@@ -113,8 +113,11 @@ static size_t write_path (char *to, size_t avail, const struct pfp_rule *o)
 {
 	size_t len;
 
-	if (o == NULL || o == o->up)
-		return 0;
+	if (o == NULL)
+		return 0;  /* just an extra guard */
+
+	if (o == o->up)
+		return snprintf (to, avail, "%x", o->slot.bus);
 
 	len = write_path (to, avail, o->up);
 
