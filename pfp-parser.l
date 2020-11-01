@@ -9,6 +9,7 @@
 %{
 #include <assert.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "pfp-parser.h"
 
@@ -62,14 +63,22 @@ any	.|\n
 }
 
 <SLOT>{
+	{xdigit}{1,4}:{xdigit}{1,2}: {
+		assert (slot != NULL);
+		slot->segment = strtol (yytext, NULL, 16);
+		slot->bus     = strtol (strchr (yytext, ':') + 1, NULL, 16);
+		BEGIN (SLOT_DEV);
+	}
 	{xdigit}{1,2}: {
 		assert (slot != NULL);
+		slot->segment = 0;
 		slot->bus = strtol (yytext, NULL, 16);
 		BEGIN (SLOT_DEV);
 	}
 	{any} {
 		unput (yytext[0]);
 		assert (slot != NULL);
+		slot->segment = 0;
 		slot->bus = 0;
 		BEGIN (SLOT_DEV);
 	}
