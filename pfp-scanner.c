@@ -240,6 +240,9 @@ struct pfp_rule *pfp_scan (void)
 			*tail = rule;
 			tail = &rule->next;
 
+			if (bus->root.bus < 0)
+				continue;
+
 			rule->parent.segment  = bus->root.segment;
 			rule->parent.bus      = bus->root.bus;
 			rule->parent.device   = bus->root.device;
