@@ -24,6 +24,17 @@ struct pci_state {
 	} bus[256];
 };
 
+static void pci_state_bus_init (struct pci_state *s)
+{
+	int i;
+
+	for (i = 0; i < 256; ++i) {
+		s->bus[i].devices = NULL;
+		s->bus[i].parent.segment = -1;\
+		s->bus[i].link = NULL;
+	}
+}
+
 static void pci_state_add (struct pci_state *s, struct pci_dev *p)
 {
 	int i;
@@ -46,7 +57,6 @@ static void pci_state_add (struct pci_state *s, struct pci_dev *p)
 static int pci_state_init (struct pci_state *s)
 {
 	struct pci_dev *p;
-	int i;
 
 	if ((s->pacc = pci_alloc ()) == NULL)
 		return 0;
@@ -54,10 +64,7 @@ static int pci_state_init (struct pci_state *s)
 	pci_init (s->pacc);
 	pci_scan_bus(s->pacc);
 
-	memset (s->bus, 0, sizeof (s->bus));
-
-	for (i = 0; i < 256; ++i)
-		s->bus[i].parent.segment = -1;
+	pci_state_bus_init (s);
 
 	for (p = s->pacc->devices; p != NULL; p = s->pacc->devices) {
 		s->pacc->devices = p->next;  /* cut device */
