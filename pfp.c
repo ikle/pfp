@@ -39,11 +39,11 @@ static int do_scan (void)
 
 static int parse_slot (const char *slot, struct pfp_sbdf *o)
 {
-	int segment;
-
 	if (sscanf (slot, "%x:%hhx:%hhx.%hho",
-		    &segment, &o->bus, &o->device, &o->function) == 4)
+		    &o->segment, &o->bus, &o->device, &o->function) == 4)
 		return 1;
+
+	o->segment = 0;
 
 	if (sscanf (slot, "%hhx:%hhx.%hho",
 		    &o->bus, &o->device, &o->function) == 3)
