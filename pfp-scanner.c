@@ -18,7 +18,7 @@ struct pci_state {
 
 	struct pci_state_bus {
 		struct pci_dev *devices;
-		int bus, device, function; /* parent BDF */
+		struct pfp_sbdf parent;
 		struct pfp_rule *link;     /* link to chain of rules to
 					      accelerate parent search */
 	} bus[256];
@@ -38,7 +38,7 @@ static int pci_state_init (struct pci_state *s)
 	memset (s->bus, 0, sizeof (s->bus));
 
 	for (i = 0; i < 256; ++i)
-		s->bus[i].bus = -1;
+		s->bus[i].parent.segment = -1;
 
 	for (p = s->pacc->devices; p != NULL; p = s->pacc->devices) {
 		s->pacc->devices = p->next;  /* cut device */
@@ -50,9 +50,10 @@ static int pci_state_init (struct pci_state *s)
 		case PCI_HEADER_TYPE_BRIDGE:
 			i = pci_read_byte (p, PCI_SECONDARY_BUS);
 
-			s->bus[i].bus      = p->bus;
-			s->bus[i].device   = p->dev;
-			s->bus[i].function = p->func;
+			s->bus[i].parent.segment  = p->domain;
+			s->bus[i].parent.bus      = p->bus;
+			s->bus[i].parent.device   = p->dev;
+			s->bus[i].parent.function = p->func;
 			break;
 		}
 	}
@@ -84,8 +85,9 @@ static struct pfp_rule *pci_rule_alloc (struct pci_dev *dev)
 
 	pci_fill_info (dev, PCI_FILL_IDENT | PCI_FILL_CLASS);
 
-	o->parent.bus = -1;
+	o->parent.segment = -1;
 
+	o->slot.segment  = dev->domain;
 	o->slot.bus      = dev->bus;
 	o->slot.device   = dev->dev;
 	o->slot.function = dev->func;
@@ -107,28 +109,31 @@ static struct pfp_rule *pci_rule_alloc (struct pci_dev *dev)
 }
 
 static const
-struct pfp_rule *find_parent_rule (const struct pfp_rule *p,
-				   int bus, int device, int function)
+struct pfp_rule *find_parent_rule (const struct pfp_rule *p, struct pfp_sbdf *o)
 {
-	for (; p != NULL && p->slot.bus == bus; p = p->next)
-		if (p->slot.device   == device &&
-		    p->slot.function == function)
+	for (; p != NULL && p->slot.bus == o->bus; p = p->next)
+		if (p->slot.device   == o->device &&
+		    p->slot.function == o->function)
 			return p;
 
 	return NULL;
+}
+
+static size_t write_segment (char *to, size_t avail, const struct pfp_rule *o)
+{
+	return snprintf (to, avail, "%x", o->slot.segment);
 }
 
 static size_t write_path (char *to, size_t avail, const struct pfp_rule *o)
 {
 	size_t len;
 
-	if (o == NULL)
-		return snprintf (to, avail, "0");  /* segment will be here */
-
-	if (o == o->up)
+	if (o == NULL || o == o->up)
 		return snprintf (to, avail, "B");  /* buggy node */
 
-	len = write_path (to, avail, o->up);
+	len = (o->up == NULL) ?
+		write_segment (to, avail, o) :
+		write_path (to, avail, o->up);
 
 	to += len;
 	avail = avail > len ? avail - len: 0;
@@ -172,18 +177,24 @@ struct pfp_rule *pfp_scan (void)
 			if (s.bus[rule->slot.bus].link == NULL)
 				s.bus[rule->slot.bus].link = rule;
 
-			rule->parent.bus      = s.bus[i].bus;
-			rule->parent.device   = s.bus[i].device;
-			rule->parent.function = s.bus[i].function;
+			rule->parent.segment  = s.bus[i].parent.segment;
+			rule->parent.bus      = s.bus[i].parent.bus;
+			rule->parent.device   = s.bus[i].parent.device;
+			rule->parent.function = s.bus[i].parent.function;
 		}
 
 	for (rule = head; rule != NULL; rule = rule->next) {
-		if ((i = rule->parent.bus) < 0)
+		if ((i = rule->parent.segment) < 0)
 			continue;
 
+		if (i != 0) {
+			fprintf (stderr, "oops\n");
+			continue;
+		}
+
 		rule->up = find_parent_rule (
-			s.bus[i].link,
-			i, rule->parent.device, rule->parent.function
+			s.bus[rule->parent.bus].link,
+			&rule->parent
 		);
 	}
 

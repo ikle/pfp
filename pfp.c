@@ -37,28 +37,29 @@ static int do_scan (void)
 	return 0;
 }
 
-static int parse_slot (const char *slot, struct pfp_bdf *o)
+static int parse_slot (const char *slot, struct pfp_sbdf *o)
 {
 	int segment;
 
-	if (sscanf (slot, "%x:%x:%x.%o", &segment, &o->bus, &o->device,
-					 &o->function) == 4)
-		return segment == 0;
+	if (sscanf (slot, "%x:%hhx:%hhx.%hho",
+		    &segment, &o->bus, &o->device, &o->function) == 4)
+		return 1;
 
-	if (sscanf (slot, "%x:%x.%o", &o->bus, &o->device, &o->function) == 3)
+	if (sscanf (slot, "%hhx:%hhx.%hho",
+		    &o->bus, &o->device, &o->function) == 3)
 		return 1;
 
 	o->bus = 0;
-	return sscanf (slot, "%x.%o", &o->device, &o->function) == 2;
+	return sscanf (slot, "%hhx.%hho", &o->device, &o->function) == 2;
 }
 
 static int do_path (const char *slot)
 {
-	struct pfp_bdf bdf;
+	struct pfp_sbdf sbdf;
 	struct pfp_rule *list;
 	const struct pfp_rule *r;
 
-	if (!parse_slot (slot, &bdf)) {
+	if (!parse_slot (slot, &sbdf)) {
 		fprintf (stderr, "pfp path: cannot parse SBDF\n");
 		return 1;
 	}
@@ -68,7 +69,7 @@ static int do_path (const char *slot)
 		return 1;
 	}
 
-	if ((r = pfp_rule_search (list, &bdf)) == NULL || r->path == NULL)
+	if ((r = pfp_rule_search (list, &sbdf)) == NULL || r->path == NULL)
 		goto no_device;
 
 	printf ("%s\n", r->path);

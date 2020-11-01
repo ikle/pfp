@@ -25,8 +25,8 @@ struct pfp_rule *pfp_rule_alloc (void)
 
 	o->path = NULL;
 
-	o->parent.bus = -1;
-	o->slot.bus   = -1;
+	o->parent.segment = -1;
+	o->slot.segment   = -1;
 
 	o->interface = o->class = -1;
 
@@ -63,13 +63,16 @@ static int rule_cmp (const void *a, const void *b)
 	if (p[0]->path != NULL && q[0]->path != NULL)
 		return strcmp (p[0]->path, q[0]->path);
 
+	if (p[0]->slot.segment != q[0]->slot.segment)
+		return p[0]->slot.segment - q[0]->slot.segment;
+
 	if (p[0]->slot.bus != q[0]->slot.bus)
-		return p[0]->slot.bus - q[0]->slot.bus;
+		return (int) p[0]->slot.bus - q[0]->slot.bus;
 
 	if (p[0]->slot.device != q[0]->slot.device)
-		return p[0]->slot.device - q[0]->slot.device;
+		return (int) p[0]->slot.device - q[0]->slot.device;
 
-	return p[0]->slot.function - q[0]->slot.function;
+	return (int) p[0]->slot.function - q[0]->slot.function;
 }
 
 struct pfp_rule *pfp_rule_sort (struct pfp_rule *o)
@@ -97,12 +100,15 @@ struct pfp_rule *pfp_rule_sort (struct pfp_rule *o)
 	return o;
 }
 
-static void show_bdf (struct pfp_bdf *o, const char *prefix, FILE *to)
+static void show_sbdf (struct pfp_sbdf *o, const char *prefix, FILE *to)
 {
 	if (o->bus < 0)
 		return;
 
 	fprintf (to, "%s\t= ", prefix);
+
+	if (o->segment != 0)
+		fprintf (to, "%x:", o->segment);
 
 	if (o->bus != 0)
 		fprintf (to, "%x:", o->bus);
@@ -123,9 +129,9 @@ static void show_rule (struct pfp_rule *o, FILE *to)
 
 	if (o->path == NULL || verbose > 0) {
 		if (o->slot.bus != 0)
-			show_bdf (&o->parent, "parent", to);
+			show_sbdf (&o->parent, "parent", to);
 
-		show_bdf (&o->slot, "slot", to);
+		show_sbdf (&o->slot, "slot", to);
 	}
 
 	if (o->interface >= 0)
@@ -154,13 +160,14 @@ void pfp_rule_show (struct pfp_rule *o, FILE *to)
 	}
 }
 
-static int slot_match (const struct pfp_bdf *o, const struct pfp_bdf *pattern)
+static int slot_match (const struct pfp_sbdf *o, const struct pfp_sbdf *pattern)
 {
-	if (pattern->bus < 0)
+	if (pattern->segment < 0)
 		return 1;
 
-	return o->bus      == pattern->bus    &&
-	       o->device   == pattern->device &&
+	return o->segment  == pattern->segment	&&
+	       o->bus      == pattern->bus	&&
+	       o->device   == pattern->device	&&
 	       o->function == pattern->function;
 }
 
@@ -194,7 +201,7 @@ static int rule_match (const struct pfp_rule *o, const struct pfp_rule *pattern)
 }
 
 const struct pfp_rule *
-pfp_rule_search (const struct pfp_rule *o, const struct pfp_bdf *slot)
+pfp_rule_search (const struct pfp_rule *o, const struct pfp_sbdf *slot)
 {
 	for (; o != NULL; o = o->next)
 		if (slot_match (&o->slot, slot))

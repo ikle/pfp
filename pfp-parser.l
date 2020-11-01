@@ -40,7 +40,7 @@ any	.|\n
 
 %%
 	struct pfp_rule *head = NULL, **tail = &head, *rule = NULL;
-	struct pfp_bdf *slot = NULL;
+	struct pfp_sbdf *slot = NULL;
 	int *id = NULL;
 
 	BEGIN (INITIAL);
