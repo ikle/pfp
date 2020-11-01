@@ -51,7 +51,7 @@ any	.|\n
 }
 
 <PATH>{
-	{xdigit}{1,2}(\/[01]?{xdigit}\.[0-7])* {
+	{xdigit}{1,4}(\/[01]?{xdigit}\.[0-7])* {
 		rule->path = strdup (yytext);
 		BEGIN (COMMENT);
 	}
