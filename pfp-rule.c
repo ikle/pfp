@@ -110,9 +110,8 @@ static void show_sbdf (struct pfp_sbdf *o, const char *prefix, FILE *to)
 	fprintf (to, "%s\t= ", prefix);
 
 	if (o->segment != 0)
-		fprintf (to, "%x:", o->segment);
-
-	if (o->bus != 0)
+		fprintf (to, "%x:%x:", o->segment, o->bus);
+	else if (o->bus != 0)
 		fprintf (to, "%x:", o->bus);
 
 	fprintf (to, "%x.%x\n", o->device, o->function);
