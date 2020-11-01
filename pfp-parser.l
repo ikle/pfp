@@ -9,7 +9,6 @@
 %{
 #include <assert.h>
 #include <stdlib.h>
-#include <string.h>
 
 #include "pfp-parser.h"
 
@@ -43,6 +42,7 @@ any	.|\n
 	struct pfp_rule *head = NULL, **tail = &head, *rule = NULL;
 	struct pfp_sbdf *slot = NULL;
 	int *id = NULL;
+	char *p;
 
 	BEGIN (INITIAL);
 
@@ -65,8 +65,8 @@ any	.|\n
 <SLOT>{
 	{xdigit}{1,4}:{xdigit}{1,2}: {
 		assert (slot != NULL);
-		slot->segment = strtol (yytext, NULL, 16);
-		slot->bus     = strtol (strchr (yytext, ':') + 1, NULL, 16);
+		slot->segment = strtol (yytext, &p,  16);
+		slot->bus     = strtol (p + 1, NULL, 16);
 		BEGIN (SLOT_DEV);
 	}
 	{xdigit}{1,2}: {
