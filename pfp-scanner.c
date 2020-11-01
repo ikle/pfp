@@ -14,7 +14,7 @@ struct pci_state {
 
 	struct pci_state_bus {
 		struct pci_dev *devices;
-		u8 bus, device, function;  /* parent BDF */
+		int bus, device, function; /* parent BDF */
 		struct pfp_rule *link;     /* link to chain of rules to
 					      accelerate parent search */
 	} bus[256];
@@ -32,6 +32,9 @@ static int pci_state_init (struct pci_state *s)
 	pci_scan_bus(s->pacc);
 
 	memset (s->bus, 0, sizeof (s->bus));
+
+	for (i = 0; i < 256; ++i)
+		s->bus[i].bus = -1;
 
 	for (p = s->pacc->devices; p != NULL; p = s->pacc->devices) {
 		s->pacc->devices = p->next;  /* cut device */
@@ -77,6 +80,8 @@ static struct pfp_rule *pci_rule_alloc (struct pci_dev *dev)
 
 	pci_fill_info (dev, PCI_FILL_IDENT | PCI_FILL_CLASS);
 
+	o->parent.bus = -1;
+
 	o->slot.bus      = dev->bus;
 	o->slot.device   = dev->dev;
 	o->slot.function = dev->func;
@@ -114,10 +119,10 @@ static size_t write_path (char *to, size_t avail, const struct pfp_rule *o)
 	size_t len;
 
 	if (o == NULL)
-		return 0;  /* just an extra guard */
+		return snprintf (to, avail, "0");  /* segment will be here */
 
 	if (o == o->up)
-		return snprintf (to, avail, "%x", o->slot.bus);
+		return snprintf (to, avail, "B");  /* buggy node */
 
 	len = write_path (to, avail, o->up);
 
@@ -169,7 +174,8 @@ struct pfp_rule *pfp_scan (void)
 		}
 
 	for (rule = head; rule != NULL; rule = rule->next) {
-		i = rule->parent.bus;
+		if ((i = rule->parent.bus) < 0)
+			continue;
 
 		rule->up = find_parent_rule (
 			s.bus[i].link,
