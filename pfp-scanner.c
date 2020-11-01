@@ -246,12 +246,9 @@ struct pfp_rule *pfp_scan (void)
 			rule->parent.function = bus->root.function;
 		}
 
-	for (rule = head; rule != NULL; rule = rule->next) {
-		if (rule->parent.segment < 0)
-			continue;
-
-		rule->up = find_parent_rule (head, &rule->parent);
-	}
+	for (rule = head; rule != NULL; rule = rule->next)
+		if (rule->parent.segment >= 0)
+			rule->up = find_parent_rule (head, &rule->parent);
 
 	for (rule = head; rule != NULL; rule = rule->next)
 		rule->path = calc_path (rule);
