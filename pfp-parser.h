@@ -1,9 +1,13 @@
 /*
- *  PCI finger-print parser
+ * PCI Finger-Print Parser
+ *
+ * Copyright (c) 2016-2020 Alexei A. Smekalkine <ikle@ikle.ru>
+ *
+ * SPDX-License-Identifier: BSD-2-Clause
  */
 
-#ifndef _PFP_PARSER_H
-#define _PFP_PARSER_H  1
+#ifndef PFP_PARSER_H
+#define PFP_PARSER_H  1
 
 #include <stdio.h>
 #include "pfp-rule.h"
@@ -17,4 +21,4 @@ void pfp_parser_reset (struct pfp_parser *o, FILE *from);
 /* all in one */
 struct pfp_rule *pfp_parse (FILE *from);
 
-#endif  /* _PFP_PARSER_H */
+#endif  /* PFP_PARSER_H */

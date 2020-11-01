@@ -1,9 +1,13 @@
 /*
- *  PCI finger-print rule
+ * PCI Finger-Print Rule
+ *
+ * Copyright (c) 2016-2020 Alexei A. Smekalkine <ikle@ikle.ru>
+ *
+ * SPDX-License-Identifier: BSD-2-Clause
  */
 
-#ifndef _PFP_RULE_H
-#define _PFP_RULE_H  1
+#ifndef PFP_RULE_H
+#define PFP_RULE_H  1
 
 #include <stdio.h>
 
@@ -38,4 +42,4 @@ pfp_rule_search (const struct pfp_rule *o, const struct pfp_bdf *slot);
 size_t
 pfp_rule_match (const struct pfp_rule *o, const struct pfp_rule *pattern);
 
-#endif  /* _PFP_RULE_H */
+#endif  /* PFP_RULE_H */

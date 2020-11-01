@@ -1,5 +1,9 @@
 /*
- * PCI finger-print bus scanner
+ * PCI Finger-Print Bus Scanner
+ *
+ * Copyright (c) 2016-2020 Alexei A. Smekalkine <ikle@ikle.ru>
+ *
+ * SPDX-License-Identifier: BSD-2-Clause
  */
 
 #include <stdlib.h>

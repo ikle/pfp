@@ -1,12 +1,16 @@
 /*
- * PCI finger-print bus scanner
+ * PCI Finger-Print Bus Scanner
+ *
+ * Copyright (c) 2016-2020 Alexei A. Smekalkine <ikle@ikle.ru>
+ *
+ * SPDX-License-Identifier: BSD-2-Clause
  */
 
-#ifndef _PFP_SCANNER_H
-#define _PFP_SCANNER_H  1
+#ifndef PFP_SCANNER_H
+#define PFP_SCANNER_H  1
 
 #include "pfp-rule.h"
 
 struct pfp_rule *pfp_scan (void);
 
-#endif  /* _PFP_SCANNER_H */
+#endif  /* PFP_SCANNER_H */

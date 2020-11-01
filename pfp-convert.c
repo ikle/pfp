@@ -1,5 +1,9 @@
 /*
- * Make PCI finger-print from lspci -nm output
+ * Make PCI Finger-Print from lspci -nm output
+ *
+ * Copyright (c) 2020 Alexei A. Smekalkine <ikle@ikle.ru>
+ *
+ * SPDX-License-Identifier: BSD-2-Clause
  */
 
 #include <stdio.h>

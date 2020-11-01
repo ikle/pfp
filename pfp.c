@@ -1,5 +1,9 @@
 /*
- *  PCI finger-print detector
+ * PCI Finger-Print Detector
+ *
+ * Copyright (c) 2016-2020 Alexei A. Smekalkine <ikle@ikle.ru>
+ *
+ * SPDX-License-Identifier: BSD-2-Clause
  */
 
 #include <stdio.h>

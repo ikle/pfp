@@ -1,5 +1,9 @@
 /*
- *  PCI finger-print parser
+ * PCI Finger-Print Parser
+ *
+ * Copyright (c) 2016-2020 Alexei A. Smekalkine <ikle@ikle.ru>
+ *
+ * SPDX-License-Identifier: BSD-2-Clause
  */
 
 %{
