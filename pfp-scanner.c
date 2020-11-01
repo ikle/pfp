@@ -24,6 +24,25 @@ struct pci_state {
 	} bus[256];
 };
 
+static void pci_state_add (struct pci_state *s, struct pci_dev *p)
+{
+	int i;
+
+	p->next = s->bus[p->bus].devices;
+	s->bus[p->bus].devices = p;
+
+	switch (pci_read_byte (p, PCI_HEADER_TYPE) & 0x7f) {
+	case PCI_HEADER_TYPE_BRIDGE:
+		i = pci_read_byte (p, PCI_SECONDARY_BUS);
+
+		s->bus[i].parent.segment  = p->domain;
+		s->bus[i].parent.bus      = p->bus;
+		s->bus[i].parent.device   = p->dev;
+		s->bus[i].parent.function = p->func;
+		break;
+	}
+}
+
 static int pci_state_init (struct pci_state *s)
 {
 	struct pci_dev *p;
@@ -42,20 +61,7 @@ static int pci_state_init (struct pci_state *s)
 
 	for (p = s->pacc->devices; p != NULL; p = s->pacc->devices) {
 		s->pacc->devices = p->next;  /* cut device */
-
-		p->next = s->bus[p->bus].devices;
-		s->bus[p->bus].devices = p;
-
-		switch (pci_read_byte (p, PCI_HEADER_TYPE) & 0x7f) {
-		case PCI_HEADER_TYPE_BRIDGE:
-			i = pci_read_byte (p, PCI_SECONDARY_BUS);
-
-			s->bus[i].parent.segment  = p->domain;
-			s->bus[i].parent.bus      = p->bus;
-			s->bus[i].parent.device   = p->dev;
-			s->bus[i].parent.function = p->func;
-			break;
-		}
+		pci_state_add (s, p);
 	}
 
 	return 1;
