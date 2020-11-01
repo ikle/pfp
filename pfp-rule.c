@@ -135,9 +135,7 @@ static void show_rule (struct pfp_rule *o, FILE *to)
 	}
 
 	if (o->path == NULL || verbose > 0) {
-		if (o->slot.bus != 0)
-			show_sbdf (&o->parent, "parent", to);
-
+		show_sbdf (&o->parent, "parent", to);
 		show_sbdf (&o->slot, "slot", to);
 	}
 
