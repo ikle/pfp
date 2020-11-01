@@ -102,7 +102,7 @@ struct pfp_rule *pfp_rule_sort (struct pfp_rule *o)
 	return o;
 }
 
-static void show_sbdf (struct pfp_sbdf *o, const char *prefix, FILE *to)
+static void show_sbdf (const struct pfp_sbdf *o, const char *prefix, FILE *to)
 {
 	if (o->bus < 0)
 		return;
