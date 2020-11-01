@@ -33,6 +33,7 @@ struct pfp_rule *pfp_rule_alloc (void)
 	o->device  = o->vendor  = -1;
 	o->sdevice = o->svendor = -1;
 
+	o->name = NULL;
 	return o;
 }
 
@@ -43,6 +44,7 @@ void pfp_rule_free (struct pfp_rule *o)
 	for (; o != NULL; o = next) {
 		next = o->next;
 		free (o->path);
+		free (o->name);
 		free (o);
 	}
 }
@@ -124,8 +126,14 @@ static void show_id (int id, const char *prefix, FILE *to)
 
 static void show_rule (struct pfp_rule *o, FILE *to)
 {
-	if (o->path != NULL)
-		fprintf (to, "path\t= %s\n", o->path);
+	if (o->path != NULL) {
+		fprintf (to, "path\t= %s", o->path);
+
+		if (o->name != NULL)
+			fprintf (to, " (%s)", o->name);
+
+		fputc ('\n', to);
+	}
 
 	if (o->path == NULL || verbose > 0) {
 		if (o->slot.bus != 0)

@@ -26,10 +26,14 @@ struct pfp_rule {
 	int class, interface;
 	int vendor, device;
 	int svendor, sdevice;
+
+	char *name;
 };
 
 struct pfp_rule *pfp_rule_alloc (void);
 void pfp_rule_free (struct pfp_rule *o);
+
+void pfp_rule_fill (struct pfp_rule *o);  /* load extra info */
 
 size_t pfp_rule_count (struct pfp_rule *o);
 struct pfp_rule *pfp_rule_sort (struct pfp_rule *o);

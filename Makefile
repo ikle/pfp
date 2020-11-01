@@ -12,4 +12,4 @@ install: $(TARGETS)
 	install -s -m 0755 $^ $(DESTDIR)/$(PREFIX)/bin
 
 pfp: CFLAGS += `pkg-config libpci --cflags --libs`
-pfp: pfp-scanner.o pfp-parser.o pfp-rule.o
+pfp: pfp-scanner.o pfp-parser.o pfp-rule.o pfp-rule-fill.o

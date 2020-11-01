@@ -105,6 +105,7 @@ static struct pfp_rule *pci_rule_alloc (struct pci_dev *dev)
 		o->sdevice = pci_read_word (dev, PCI_SUBSYSTEM_ID);
 	}
 
+	pfp_rule_fill (o);
 	return o;
 }
 
