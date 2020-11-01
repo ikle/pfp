@@ -104,7 +104,7 @@ struct pfp_rule *pfp_rule_sort (struct pfp_rule *o)
 
 static void show_sbdf (const struct pfp_sbdf *o, const char *prefix, FILE *to)
 {
-	if (o->bus < 0)
+	if (o->segment < 0)
 		return;
 
 	fprintf (to, "%s\t= ", prefix);
