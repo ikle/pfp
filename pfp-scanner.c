@@ -16,7 +16,7 @@
 struct pci_bus {
 	struct pci_bus *next;
 	struct pfp_sbdf root;
-	int bus;
+	int segment, bus;
 	struct pci_dev *devices;
 };
 
@@ -28,9 +28,9 @@ static struct pci_bus *pci_bus_alloc (int segment, int bus)
 		return NULL;
 
 	o->next		= NULL;
-	o->root.segment	= segment;
+	o->segment	= segment;
 	o->bus		= bus;
-	o->root.bus	= -1;
+	o->root.segment	= -1;
 	o->devices	= NULL;
 	return o;
 }
@@ -67,7 +67,7 @@ pci_state_find (struct pci_state *o, int segment, int bus, int alloc)
 	struct pci_bus *p;
 
 	for (p = o->list; p != NULL; p = p->next)
-		if (p->root.segment == segment && p->bus == bus)
+		if (p->segment == segment && p->bus == bus)
 			return p;
 
 	if (!alloc || (p = pci_bus_alloc (segment, bus)) == NULL)
@@ -97,6 +97,7 @@ static int pci_state_add (struct pci_state *o, struct pci_dev *p)
 		if ((bus = pci_state_find (o, p->domain, i, 1)) == NULL)
 			return 0;
 
+		bus->root.segment  = p->domain;
 		bus->root.bus      = p->bus;
 		bus->root.device   = p->dev;
 		bus->root.function = p->func;
@@ -240,7 +241,7 @@ struct pfp_rule *pfp_scan (void)
 			*tail = rule;
 			tail = &rule->next;
 
-			if (bus->root.bus < 0)
+			if (bus->root.segment < 0)
 				continue;
 
 			rule->parent.segment  = bus->root.segment;
