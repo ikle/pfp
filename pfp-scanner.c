@@ -115,7 +115,7 @@ static int pci_state_init (struct pci_state *s)
 		return 0;
 
 	pci_init (s->pacc);
-	pci_scan_bus(s->pacc);
+	pci_scan_bus (s->pacc);
 
 	s->list = NULL;
 
