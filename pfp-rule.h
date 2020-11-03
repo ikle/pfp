@@ -22,6 +22,7 @@ struct pfp_rule {
 
 	char *path;
 
+	int segment;  /* real segment */
 	struct pfp_sbdf parent, slot;
 	int class, interface;
 	int vendor, device;

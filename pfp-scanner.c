@@ -107,9 +107,32 @@ static int pci_state_add (struct pci_state *o, struct pci_dev *p)
 	return 1;
 }
 
+static void recalc_segment (struct pci_bus *o)
+{
+	unsigned char s;
+
+	if (o->root.segment >= 0)  /* not a root bridge */
+		return;
+
+	if (o->segment > 0 || o->bus == 0)  /* non-virtual segment */
+		return;
+
+	s = o->bus + (o->bus & 1);
+
+	o->segment = (o->bus   & 0x01) |
+		     ((s >> 6) & 0x02) |
+		     ((s >> 4) & 0x04) |
+		     ((s >> 2) & 0x08) |
+		     ((s >> 0) & 0x10) |
+		     ((s << 2) & 0x20) |
+		     ((s << 4) & 0x40) |
+		     ((s << 6) & 0x80);
+}
+
 static int pci_state_init (struct pci_state *s)
 {
 	struct pci_dev *p;
+	struct pci_bus *bus;
 
 	if ((s->pacc = pci_alloc ()) == NULL)
 		return 0;
@@ -123,6 +146,9 @@ static int pci_state_init (struct pci_state *s)
 		s->pacc->devices = p->next;  /* cut device */
 		pci_state_add (s, p);
 	}
+
+	for (bus = s->list; bus != NULL; bus = bus->next)
+		recalc_segment (bus);
 
 	return 1;
 }
@@ -188,7 +214,7 @@ struct pfp_rule *find_parent_rule (const struct pfp_rule *p, struct pfp_sbdf *o)
 
 static size_t write_segment (char *to, size_t avail, const struct pfp_rule *o)
 {
-	return snprintf (to, avail, "%x", o->slot.segment);
+	return snprintf (to, avail, "%x", o->segment);
 }
 
 static size_t write_path (char *to, size_t avail, const struct pfp_rule *o)
@@ -241,8 +267,10 @@ struct pfp_rule *pfp_scan (void)
 			*tail = rule;
 			tail = &rule->next;
 
-			if (bus->root.segment < 0)
+			if (bus->root.segment < 0) {
+				rule->segment = bus->segment;
 				continue;
+			}
 
 			rule->parent.segment  = bus->root.segment;
 			rule->parent.bus      = bus->root.bus;

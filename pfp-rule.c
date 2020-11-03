@@ -25,6 +25,7 @@ struct pfp_rule *pfp_rule_alloc (void)
 
 	o->path = NULL;
 
+	o->segment = 0;
 	o->parent.segment = -1;
 	o->slot.segment   = -1;
 
