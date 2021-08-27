@@ -1,0 +1,114 @@
+# North Bridge, AMD Bobcat
+
+slot	= 0.0
+class	= 0600 (Host Bridge)
+vendor	= 1022 (AMD)
+device	= 1510 (Bobcat Root Complex)
+
+slot	= 4.0
+class	= 0604.0 (PCI-to-PCI Bridge)
+vendor	= 1022
+device	= 1512 (Bobcat Root Port 1)
+
+slot	= 5.0
+class	= 0604.0
+vendor	= 1022
+device	= 1513 (Bobcat Root Port 2)
+
+slot	= 5.0
+class	= 0604.0
+vendor	= 1022
+device	= 1514 (Bobcat Root Port 3)
+
+slot	= 7.0
+class	= 0604.0
+vendor	= 1022
+device	= 1515 (Bobcat Root Port 4)
+
+# South Bridge, AMD SB820M
+
+slot	= 11.0
+class	= 0106.1 (SATA AHCI 1.0)
+vendor	= 1002 (AMD/ATI)
+device	= 4390 (SB7x0/SB8x0/SB9x0 SATA Controller, IDE mode)
+
+slot	= 12.0
+class	= 0c03.10 (OHCI USB Controller)
+vendor	= 1002
+device	= 4397 (SB7x0/SB8x0/SB9x0 USB OHCI0 Controller)
+
+slot	= 12.2
+class	= 0c03.20 (EHCI USB Controller)
+vendor	= 1002
+device	= 4396 (SB7x0/SB8x0/SB9x0 USB EHCI Controller)
+
+slot	= 13.0
+class	= 0c03.10
+vendor	= 1002
+device	= 4397
+
+slot	= 13.2
+class	= 0c03.20
+vendor	= 1002
+device	= 4396
+
+slot	= 14.0
+class	= 0c05.0 (SMBus)
+vendor	= 1002
+device	= 4385 (SBx00 SMBus Controller)
+
+slot	= 14.1
+class	= 0101 (IDE Controller)
+vendor	= 1002
+device	= 439c (SB7x0/SB8x0/SB9x0 IDE Controller)
+
+slot	= 14.3
+class	= 0601.0 (ISA Bridge)
+vendor	= 1002
+device	= 439d (SB7x0/SB8x0/SB9x0 LPC host controller)
+
+slot	= 14.4
+class	= 0604.0 (PCI-to-PCI Bridge)
+vendor	= 1002
+device	= 4384 (SBx00 PCI-to-PCI Bridge)
+
+slot	= 14.5
+class	= 0c03.10
+vendor	= 1002
+device	= 4399 (SB7x0/SB8x0/SB9x0 USB OHCI2 Controller)
+
+slot	= 16.0
+class	= 0c03.10
+vendor	= 1002
+device	= 4397
+
+slot	= 16.2
+class	= 0c03.20
+vendor	= 1002
+device	= 4396
+
+# NICs
+
+parent	= 4.0
+slot	= 1:0.0
+class	= 0200.0 (Ethernet Controller)
+vendor	= 10ec (Realtek)
+device	= 8168 (RTL8111/8168/8411 PCIe Gigabit Ethernet Controller)
+
+parent	= 5.0
+slot	= 0:2:0.0
+class	= 0200.0
+vendor	= 10ec
+device	= 8168
+
+parent	= 6.0
+slot	= 3:0.0
+class	= 0200.0
+vendor	= 10ec
+device	= 8168
+
+parent	= 7.0
+slot	= 4:0.0
+class	= 0200.0
+vendor	= 10ec
+device	= 8168
