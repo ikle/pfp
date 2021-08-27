@@ -1,0 +1,39 @@
+slot	= 9.0
+class	= 0200.0 (Ethernet Controller)
+vendor	= 10ec (Realtek)
+device	= 8139 (RTL-8100/8101L/8139 PCI Fast Ethernet Controller)
+
+slot	= a.0
+class	= 0200.0
+vendor	= 10ec
+device	= 8139
+
+slot	= b.0
+class	= 0200.0
+vendor	= 10ec
+device	= 8139
+
+slot	= c.0
+class	= 0200.0
+vendor	= 10ec
+device	= 8139
+
+slot	= 13.0
+class	= 1010.0 (Entertainment Encryption/Decryption)
+vendor	= 1022 (AMD)
+device	= 8210
+
+slot	= 14.0
+class	= 0601.0 (ISA Bridge)
+vendor	= 1022
+device	= 2090 (Geode CS5536 ISA)
+
+slot	= 16.0
+class	= 0c03.20 (EHCI USB Controller)
+vendor	= 1022
+device	= 2095 (Geode CS5536 EHC)
+
+slot	= 17.0
+class	= 0101 (IDE Controller)
+vendor	= 1022
+device	= 209a (Geode CS5536 IDE)
