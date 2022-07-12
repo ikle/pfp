@@ -165,7 +165,7 @@ static void pci_state_fini (struct pci_state *o)
 	pci_cleanup (o->pacc);
 }
 
-static struct pfp_rule *pci_rule_alloc (struct pci_dev *dev)
+static struct pfp_rule *pci_rule_alloc (struct pci_dev *dev, int verbose)
 {
 	struct pfp_rule *o;
 	int v;
@@ -195,7 +195,9 @@ static struct pfp_rule *pci_rule_alloc (struct pci_dev *dev)
 		o->sdevice = pci_read_word (dev, PCI_SUBSYSTEM_ID);
 	}
 
-	pfp_rule_fill (o);
+	if (verbose)
+		pfp_rule_fill (o);
+
 	return o;
 }
 
@@ -248,7 +250,7 @@ static char *calc_path (const struct pfp_rule *o)
 	return path;
 }
 
-struct pfp_rule *pfp_scan (void)
+struct pfp_rule *pfp_scan (int verbose)
 {
 	struct pci_state s;
 	struct pci_bus *bus;
@@ -261,7 +263,7 @@ struct pfp_rule *pfp_scan (void)
 
 	for (bus = s.list; bus != NULL; bus = bus->next)
 		for (p = bus->devices; p != NULL; p = p->next) {
-			if ((rule = pci_rule_alloc (p)) == NULL)
+			if ((rule = pci_rule_alloc (p, verbose)) == NULL)
 				goto error;
 
 			*tail = rule;

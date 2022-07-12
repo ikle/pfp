@@ -11,6 +11,6 @@
 
 #include "pfp-rule.h"
 
-struct pfp_rule *pfp_scan (void);
+struct pfp_rule *pfp_scan (int verbose);
 
 #endif  /* PFP_SCANNER_H */
