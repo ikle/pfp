@@ -7,12 +7,31 @@
  */
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 #include <glob.h>
 #include <unistd.h>
 
 #include "pfp-rule.h"
+
+static char *add_name (char *list, const char *name)
+{
+	int len;
+	char *p;
+
+	if (list == NULL)
+		return strdup (name);
+
+	len = snprintf (NULL, 0, "%s, %s", list, name) + 1;
+
+	if ((p = malloc (len)) == NULL)
+		return list;
+
+	snprintf (p, len, "%s, %s", list, name);
+	free (list);
+	return p;
+}
 
 static char *get_device_name (const char *device)
 {
@@ -45,8 +64,7 @@ static char *get_device_name (const char *device)
 			if ((p = strchr (p, '/')) != NULL)
 				*p = ' ';
 
-			name = strdup (g.gl_pathv[i] + 11);
-			break;
+			name = add_name (name, g.gl_pathv[i] + 11);
 		}
 
 	globfree (&g);
