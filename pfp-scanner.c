@@ -1,7 +1,7 @@
 /*
  * PCI Finger-Print Bus Scanner
  *
- * Copyright (c) 2016-2020 Alexei A. Smekalkine <ikle@ikle.ru>
+ * Copyright (c) 2016-2024 Alexei A. Smekalkine <ikle@ikle.ru>
  *
  * SPDX-License-Identifier: BSD-2-Clause
  */
@@ -165,7 +165,8 @@ static void pci_state_fini (struct pci_state *o)
 	pci_cleanup (o->pacc);
 }
 
-static struct pfp_rule *pci_rule_alloc (struct pci_dev *dev, int verbose)
+static struct pfp_rule *
+pci_rule_alloc (struct pci_dev *dev, int verbose, const char *class)
 {
 	struct pfp_rule *o;
 	int v;
@@ -196,7 +197,7 @@ static struct pfp_rule *pci_rule_alloc (struct pci_dev *dev, int verbose)
 	}
 
 	if (verbose)
-		pfp_rule_fill (o);
+		pfp_rule_fill (o, class);
 
 	return o;
 }
@@ -250,7 +251,7 @@ static char *calc_path (const struct pfp_rule *o)
 	return path;
 }
 
-struct pfp_rule *pfp_scan (int verbose)
+struct pfp_rule *pfp_scan (int verbose, const char *class)
 {
 	struct pci_state s;
 	struct pci_bus *bus;
@@ -263,7 +264,7 @@ struct pfp_rule *pfp_scan (int verbose)
 
 	for (bus = s.list; bus != NULL; bus = bus->next)
 		for (p = bus->devices; p != NULL; p = p->next) {
-			if ((rule = pci_rule_alloc (p, verbose)) == NULL)
+			if ((rule = pci_rule_alloc (p, verbose, class)) == NULL)
 				goto error;
 
 			*tail = rule;

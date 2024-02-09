@@ -1,7 +1,7 @@
 /*
  * PCI Finger-Print Rule fill extra info helpers
  *
- * Copyright (c) 2016-2020 Alexei A. Smekalkine <ikle@ikle.ru>
+ * Copyright (c) 2016-2024 Alexei A. Smekalkine <ikle@ikle.ru>
  *
  * SPDX-License-Identifier: BSD-2-Clause
  */
@@ -33,7 +33,7 @@ static char *add_name (char *list, const char *name)
 	return p;
 }
 
-static char *get_device_name (const char *device)
+static char *get_device_name (const char *class, const char *device)
 {
 	char *name = NULL, *p;
 	glob_t g;
@@ -41,7 +41,10 @@ static char *get_device_name (const char *device)
 	char link[128];
 	ssize_t len;
 
-	if (glob ("/sys/class/*/*/device", 0, NULL, &g) == 0)
+	snprintf (link, sizeof (link), "/sys/class/%s/*/device",
+		  class != NULL ? class : "*");
+
+	if (glob (link, 0, NULL, &g) == 0)
 		for (i = 0; i < g.gl_pathc; ++i) {
 			len = readlink (g.gl_pathv[i], link, sizeof (link));
 
@@ -71,7 +74,7 @@ static char *get_device_name (const char *device)
 	return name;
 }
 
-static void pfp_rule_fill_name (struct pfp_rule *o)
+static void pfp_rule_fill_name (struct pfp_rule *o, const char *class)
 {
 	char device[16];
 
@@ -82,10 +85,10 @@ static void pfp_rule_fill_name (struct pfp_rule *o)
 		  o->slot.segment, o->slot.bus,
 		  o->slot.device,  o->slot.function);
 
-	o->name = get_device_name (device);
+	o->name = get_device_name (class, device);
 }
 
-void pfp_rule_fill (struct pfp_rule *o)
+void pfp_rule_fill (struct pfp_rule *o, const char *class)
 {
-	pfp_rule_fill_name (o);
+	pfp_rule_fill_name (o, class);
 }

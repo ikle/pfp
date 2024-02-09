@@ -1,7 +1,7 @@
 /*
  * PCI Finger-Print Detector
  *
- * Copyright (c) 2016-2020 Alexei A. Smekalkine <ikle@ikle.ru>
+ * Copyright (c) 2016-2024 Alexei A. Smekalkine <ikle@ikle.ru>
  *
  * SPDX-License-Identifier: BSD-2-Clause
  */
@@ -21,7 +21,7 @@ static int do_scan (void)
 {
 	struct pfp_rule *r;
 
-	if ((r = pfp_scan (1)) == NULL) {
+	if ((r = pfp_scan (1, NULL)) == NULL) {
 		perror ("pfp scan");
 		return 1;
 	}
@@ -64,7 +64,7 @@ static int do_path (const char *slot)
 		return 1;
 	}
 
-	if ((list = pfp_scan (0)) == NULL) {
+	if ((list = pfp_scan (0, NULL)) == NULL) {
 		perror ("pfp path");
 		return 1;
 	}
@@ -104,7 +104,7 @@ static int pfp_match (FILE *f, size_t *rank, size_t *count)
 {
 	struct pfp_rule *r, *pattern;
 
-	if ((r = pfp_scan (0)) == NULL) {
+	if ((r = pfp_scan (0, NULL)) == NULL) {
 		perror ("pfp scan");
 		goto no_scan;
 	}
