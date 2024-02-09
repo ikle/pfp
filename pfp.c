@@ -80,6 +80,32 @@ no_device:
 	return 1;
 }
 
+static int do_lookup (const char *path, const char *class)
+{
+	struct pfp_rule *list;
+	const struct pfp_rule *o;
+	const char *p;
+
+	if ((list = pfp_scan (1, class)) == NULL) {
+		perror ("pfp path");
+		return 1;
+	}
+
+	for (o = list; o != NULL; o = o->next)
+		if (o->path != NULL && strcmp (path, o->path) == 0)
+			break;
+
+	if (o == NULL || o->name == NULL || (p = strchr (o->name, ' ')) == NULL)
+		goto no_name;
+
+	printf ("%s\n", p + 1);
+	pfp_rule_free (list);
+	return 0;
+no_name:
+	pfp_rule_free (list);
+	return 1;
+}
+
 static int do_parse (void)
 {
 	struct pfp_rule *r;
@@ -209,6 +235,9 @@ int main (int argc, char *argv[])
 	if (argc == 3 && strcmp (argv[1], "path") == 0)
 		return do_path (argv[2]);
 
+	if (argc == 4 && strcmp (argv[1], "lookup") == 0)
+		return do_lookup (argv[2], argv[3]);
+
 	if (argc == 2 && strcmp (argv[1], "parse") == 0)
 		return do_parse ();
 
@@ -218,6 +247,7 @@ int main (int argc, char *argv[])
 	fprintf (stderr, "usage:\n"
 			 "\tpfp [-v] scan > out\n"
 			 "\tpfp [-v] path SBDF\n"
+			 "\tpfp [-v] lookup PATH CLASS\n"
 			 "\tpfp [-v] parse < in\n"
 			 "\tpfp [-v] match < in\n"
 			 "\tpfp [-v] match rule-directory ...\n");
